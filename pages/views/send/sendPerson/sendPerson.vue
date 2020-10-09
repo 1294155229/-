@@ -1,0 +1,519 @@
+<template>
+	<view>
+		<view class="form u-border-top">
+			<view class="form-row u-border-bottom">
+				<view class="label-box"><view class="label">姓名</view></view>
+				<view class="right-box">
+					<view class="text"></view>
+					<input class="input" type="text" placeholder="请输入" placeholder-style="color:#BFBFBF" v-model="form.title" />
+				</view>
+			</view>
+
+			<view class="form-row u-border-bottom">
+				<view class="label-box"><view class="label">联系方式</view></view>
+				<view class="right-box"><input class="input" maxlength="11" type="number" placeholder="请输入" placeholder-style="color:#BFBFBF" v-model="form.contactWay" /></view>
+			</view>
+			<view class="form-row u-border-bottom">
+				<view class="label-box"><view class="label">地址</view></view>
+				<view class="right-box"><input class="input" type="text" placeholder="请输入" placeholder-style="color:#BFBFBF" v-model="form.address" /></view>
+			</view>
+			<view class="form-row u-border-bottom" v-if="list">
+				<view class="label-box"><view class="label">工种</view></view>
+				<view class="right-box">
+					<!-- <input class="input" type="text" placeholder="请输入" placeholder-style="color:#BFBFBF" value="" /> -->
+					<picker mode="selector" :range="list" range-key="classifyName" @change="selectChange">
+						<view class="u-flex">
+							<view class="text " :class="Typeofwork == -1 ? 'color1' : ''">{{ Typeofwork == -1 ? '请选择' : list[Typeofwork].classifyName }}</view>
+							<u-icon class="icon" name="arrow-right" color="#BFBFBF" size="26"></u-icon>
+						</view>
+					</picker>
+				</view>
+			</view>
+		</view>
+		<view class="line_bar"></view>
+		<view class="form">
+			<view class="form-row u-border-bottom">
+				<view class="label-box"><view class="label">优先考虑工作地点</view></view>
+				<view class="right-box"><input class="input" type="text" placeholder="请输入" placeholder-style="color:#BFBFBF" v-model="form.firstWorkAddr" /></view>
+			</view>
+
+			<view class="form-row u-border-bottom">
+				<view class="label-box"><view class="label">当前状态</view></view>
+				<view class="right-box">
+					<view class="picker-wrapper" @tap="chooseStatus">
+						<view class="uni-input">{{ choosename == 1 ? '忙' : '闲' }}</view>
+						<image src="/static/image/common/select.png"></image>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<view class="line_bar"></view>
+		<view class="form">
+			<view class="form-row u-border-bottom"><view class="title">工程案例</view></view>
+			<textarea class="textarea u-border" value="" placeholder="多行输入" placeholder-style="color:#BFBFBF" v-model="form.projectCase" />
+		</view>
+		<!-- 底部添加图片 -->
+		<view class="uplodImg">
+			<view class="imgs" v-for="(it, i) in weighingImg" :key="i">
+				<image :src="it" mode="aspectFill" @tap="previewImage(it, i)"></image>
+				<image class="closeimage" data-id="2" :data-index="index" src="/static/image/common/close_icon.png" mode="" @click="aoutaddimg(i)"></image>
+			</view>
+			<view class="upload" v-if="weighingImg.length < 9" @tap="addPic(1)"></view>
+		</view>
+
+		<view class="send-bottom-btn-box"><view class="bottom-btn" @click="adddata">提交</view></view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			items: {},
+			Typeofwork: -1, //选择工种
+			choosename: 0, //选择忙闲返回
+			id: '', // 当前记录的ID
+			iconId: '', // 所属分类ID
+			form: {
+				contactName: '', //姓名
+				contactWay: '', //联系方式
+				address: '', //地址、籍贯
+				firstWorkAddr: '', //优先考虑工作地点
+				state: '', //工作状态：1、忙 0、闲
+				projectCase: '', //工程案例
+				classifyIds: '', //二级分类
+				imgUrls: ''
+			},
+			list: [],
+			weighingImg: [], //添加图片
+			bjstate: false //编辑状态
+		};
+	},
+
+	//渲染
+	onLoad(options) {
+		let that = this;
+		let data = JSON.parse(options.item); // 字符串转对象
+		this.id = data.sort ? data.sort : '';
+		this.iconId = data.sort ? data.sort : '';
+		if (typeof data.iconId == 'string') {
+			data.num = data.iconId;
+			this.bjstate = true;
+			data.title = data.infoTitle;
+			this.form = data;
+			this.choosename = parseInt(data.workStatus);
+			if (data.imgUrls) {
+				let imgs = JSON.parse(data.imgUrls);
+				imgs.forEach(resd => {
+					that.weighingImg = [...that.weighingImg, this.$http.IMG_BASE_URL + resd];
+				});
+			}
+		} else {
+			// 发布
+			data.num = data.id;
+			this.id = data.sort ? data.sort : '';
+			this.form.contactWay = this.$store.state.userInfo.mobile;
+		}
+		this.items = data;
+		this.$http.getSecondClassifyList(data.num).then(res => {
+			if (res.code == 1) {
+				let datas = Object.keys(res.data).length == 0;
+				datas ? (that.list = '') : (that.list = res.data);
+				if (this.bjstate) {
+					res.data.map((item, index) => {
+						item.id == data.classifyIds ? (that.Typeofwork = index) : '';
+					});
+				}
+			}
+		});
+		// console.log(this.list[that.Typeofwork],321);
+	},
+	methods: {
+		//预览图片
+		previewImage(index, i) {
+			// var i = this.detailList[0].lunboImg; //获取当前页面的轮播图数据
+			//uniapp预览轮播图
+			var arr = [];
+			arr.push(index);
+			uni.previewImage({
+				current: i, //预览图片的下标
+				urls: arr //预览图片的地址，必须要数组形式，如果不是数组形式就转换成数组形式就可以
+			});
+		},
+		//删除图片
+		aoutaddimg(index) {
+			let that = this;
+			uni.showModal({
+				title: '温馨提示',
+				content: '是否删除该照片',
+				success: res => {
+					if (res.confirm) {
+						let data = [];
+						for (let i in this.weighingImg) {
+							i == index ? '' : (data = [...data, that.weighingImg[i]]);
+						}
+						that.weighingImg = data;
+					} else if (res.cancel) {
+						// console.log('用户点击取消');
+					}
+				}
+			});
+		},
+		//切换二类
+		selectChange(ev) {
+			this.Typeofwork = ev.detail.value;
+			this.shows = true;
+		},
+		//闲和忙
+		chooseStatus() {
+			let that = this;
+			uni.showActionSheet({
+				itemList: ['闲', '忙'],
+				success: tapIndex => {
+					that.choosename = tapIndex.tapIndex;
+				}
+			});
+		},
+		//提交
+		adddata() {
+			this.$u.debounce(() => {
+				let that = this;
+				let data = this.form;
+				let name = '';
+				this.form.title ? '' : (name = name + '姓名/');
+				this.form.contactWay.length == 11 ? '' : (name = name + '联系方式/');
+				this.form.address ? '' : (name = name + '地址/');
+				this.form.projectCase ? '' : (name = name + '工程案例/');
+				if (name) {
+					let data = name.substr(0, name.length - 1);
+					return this.$helper.showN('请输入' + data);
+				}
+
+				if (this.weighingImg) {
+					let names = [];
+					this.weighingImg.forEach(resd => {
+						let imgs = resd.split(this.$http.IMG_BASE_URL);
+						names = [...names, imgs[1]];
+					});
+					data.imgUrls = JSON.stringify(names);
+				}
+
+				data.state = this.choosename;
+				this.list ? (data.classifyIds = this.list[this.Typeofwork].id) : '';
+				data.latitude = this.$store.state.userPosition.latitude;
+				data.longitude = this.$store.state.userPosition.longitude;
+				uni.showLoading({ title: '加载中', mask: true });
+
+				if (this.bjstate) {
+					//编辑
+					data.infoTitle = data.title;
+					data.workStatus = data.state;
+					data.createTime = '';
+					data.updateTime = '';
+					// console.log(data)
+					this.$http.getInfoaddEvaluaeditInfo(data).then(res => {
+						setTimeout(function() {
+							uni.hideLoading();
+							that.$helper.showN(res.msg);
+						}, 2000);
+						if (res.code == 1) {
+							setTimeout(function() {
+								uni.navigateBack({
+									delta: 1
+								});
+							}, 2000);
+						}
+					});
+				} else {
+					data.iconId = this.items.id;
+					
+					// 添加经纬度和当前的城市名称
+					data.cityName = this.$store.state.userPosition.city;
+					data.longitude = this.$store.state.userPosition.longitude;
+					data.latitude = this.$store.state.userPosition.latitude;
+					
+					this.$http.getSecondClassissueInfo(data).then(res => {
+						setTimeout(function() {
+							uni.hideLoading();
+							that.$helper.showN(res.msg);
+						}, 2000);
+						if (res.code == 1) {
+							setTimeout(function() {
+								that.$helper.redirect('/pages/views/send/sendSuc/sendSuc');
+							}, 2000);
+						}
+					});
+				}
+			});
+		},
+		//添加评论图片
+		addPic(index) {
+			this.index = index;
+			this.chooseImage(this.index);
+		},
+
+		chooseImage(index) {
+			let isUpload = true;
+			let count = 9;
+			if (index == 1) {
+				isUpload = this.weighingImg.length < 9;
+				count = 9 - this.weighingImg.length;
+			}
+			if (isUpload) {
+				// console.log(isUpload)
+				uni.chooseImage({
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['camera', 'album'], //从相册选择
+					count: count,
+					success: res => {
+						this.isUploadImg = true;
+						uni.showLoading({
+							title: '图片处理中...',
+							mask: true
+						});
+						this.uploadimg(
+							{
+								path: res.tempFilePaths
+							},
+							index
+						);
+					}
+				});
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '最多只能上傳九張圖片',
+					duration: 2000
+				});
+			}
+		},
+		//多张图片上传
+		uploadimg(data, index) {
+			// console.log("Datadata",data)
+			let that = this;
+			let i = data.i ? data.i : 0;
+			let success = data.success ? data.success : 0;
+			let fail = data.fail ? data.fail : 0;
+
+			uni.showLoading({
+				title: '正在上传第' + (success <= 0 ? 1 : success + 1) + '/' + data.path.length,
+				mask: true
+			});
+			uni.uploadFile({
+				url: this.$http.IMG_UPLOAD_URL,
+				filePath: data.path[i],
+				name: 'files',
+				header: {
+					TOKEN: this.$store.state.userToken
+				},
+				success: resp => {
+					success++;
+					if (index == 1) {
+						let datas = JSON.parse(resp.data);
+						// this.imgLists=this.imgLists.concat([data.path[i]]);
+
+						// this.carImg = this.addImgLists.toString();
+
+						this.weighingImg.push(this.$http.IMG_BASE_URL + datas.data);
+					}
+				},
+				fail: err => {
+					fail++;
+					console.log('fail', fail);
+				},
+				complete: () => {
+					if (that.isUploadImg) {
+						i++;
+						if (i == data.path.length) {
+							//当图片传完时，停止调用
+							// console.log('执行完毕');
+							// console.log('成功：' + success + ' 失败：' + fail);
+							uni.showToast({
+								icon: 'none',
+								title: '成功' + success + '张'
+							});
+							if (this.imgLists.length >= 9) {
+								this.isAddShow = false;
+							}
+						} else {
+							//若图片还没有传完，则继续调用函数
+							data.i = i;
+							data.success = success;
+							data.fail = fail;
+							that.uploadimg(data, that.index); //递归，回调自己
+						}
+					} else {
+						return;
+					}
+				}
+			});
+			return;
+			// 上传图之前先进行一次压缩
+			uni.compressImage({
+				src: data.path[i],
+				quality: 80,
+				success: com_res => {
+					console.log('压缩图片成功', com_res);
+					uni.uploadFile({
+						url: this.$http.IMG_UPLOAD_URL,
+						filePath: com_res.tempFilePath,
+						name: 'files',
+						header: {
+							TOKEN: this.$store.state.userToken
+						},
+						success: resp => {
+							success++;
+							if (index == 1) {
+								// this.imgLists=this.imgLists.concat([data.path[i]]);
+								// this.addImgLists.push(JSON.parse(resp.data).data);
+								// this.carImg = this.addImgLists.toString();
+								this.carImg.push(JSON.parse(resp.data).data);
+							}
+						},
+						fail: err => {
+							fail++;
+							console.log('fail', fail);
+						},
+						complete: () => {
+							if (that.isUploadImg) {
+								i++;
+								if (i == data.path.length) {
+									//当图片传完时，停止调用
+									// console.log('执行完毕');
+									// console.log('成功：' + success + ' 失败：' + fail);
+									uni.showToast({
+										icon: 'none',
+										title: '成功' + success + '张'
+									});
+									if (this.imgLists.length >= 9) {
+										this.isAddShow = false;
+									}
+								} else {
+									//若图片还没有传完，则继续调用函数
+									data.i = i;
+									data.success = success;
+									data.fail = fail;
+									that.uploadimg(data, that.index); //递归，回调自己
+								}
+							} else {
+								return;
+							}
+						}
+					});
+				},
+				fail: com_err => {
+					console.log('压缩图片失败');
+					uni.uploadFile({
+						url: this.$http.IMG_UPLOAD_URL,
+						filePath: data.path[i],
+						name: 'files',
+						header: {
+							TOKEN: uni.getStorageSync('user_token')
+						},
+						success: resp => {
+							uni.hideLoading();
+							success++;
+							// if(index == 1){
+							// 	this.imgLists.push(JSON.parse(resp.data).data);
+							// 	this.carImg = this.imgLists.toString();
+							// }else if(index == 2){
+							// 	this.imgTwoLists.push(JSON.parse(resp.data).data);
+							// 	this.weighingImg = this.imgTwoLists.toString();
+							// }
+						},
+						fail: err => {
+							fail++;
+							// console.log('fail:' + i + 'fail:' + fail);
+						},
+						complete: () => {
+							if (that.isUploadImg) {
+								i++;
+								if (i == data.path.length) {
+									//当图片传完时，停止调用
+									// console.log('执行完毕');
+									// console.log('成功：' + success + ' 失败：' + fail);
+									uni.showToast({
+										icon: 'none',
+										title: '成功' + success + '张'
+									});
+								} else {
+									//若图片还没有传完，则继续调用函数
+									data.i = i;
+									data.success = success;
+									data.fail = fail;
+
+									that.uploadimg(data, that.index); //递归，回调自己
+								}
+							} else {
+								return;
+							}
+						}
+					});
+				}
+			});
+		},
+		// 删除图片
+		DelImg(index, it, type) {
+			uni.showModal({
+				title: '温馨提示',
+				content: '是否删除该照片',
+				success: res => {
+					if (res.confirm) {
+						this.weighingImg.splice(index, 1);
+						// this.imgLists[index].splice(i, 1);
+						// this.$set(this.imgLists, index, this.imgLists[index]);
+						// this.jsonEvaluate[index].image = this.imgLists[index].join(',');
+						// console.log(this.imgLists)
+						// this.addImgLists.splice(this.deleteImgIndexs, 1);
+					} else if (res.cancel) {
+						// console.log('用户点击取消');
+					}
+				}
+			});
+		}
+	}
+};
+</script>
+
+<style lang="scss">
+page {
+	background-color: #ffffff;
+}
+.uplodImg {
+	margin: 15rpx 0 0 35rpx;
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	vertical-align: middle;
+	// padding: 30rpx 32rpx;
+	.imgs {
+		position: relative;
+		left: 0;
+		right: 0;
+		width: 190rpx;
+		// margin: 20rpx 15rpx 0 0;
+		image {
+			margin: 10rpx 15rpx 0 0;
+			width: 180rpx;
+			height: 180rpx;
+			vertical-align: middle;
+		}
+	}
+	.closeimage {
+		position: absolute;
+		right: 0;
+		top: 5rpx;
+		width: 30rpx !important;
+		height: 30rpx !important;
+	}
+	.upload {
+		margin: 10rpx 10rpx 0 0;
+		width: 180rpx;
+		height: 180rpx;
+		background-image: url('/static/image/common/add-icon.png');
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+	}
+}
+</style>

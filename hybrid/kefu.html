@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>在线客服</title>
+    </head>
+    <body>
+        <a id="myEntry" href="javascript:;" onclick='easemobim.bind({configId: "81187707-d640-4960-8582-3c5017e7be46"})'></a>
+        <script>
+            var kefu = (function(){
+                // 从详情页进入此客服页面时，需要获得到当前的用户ID和对应的商品ID 或者是 当前的用户ID和对应的课程ID
+                // 到达此只有通过用户ID和对应的ID查询到全部所需要的数据，执行初始化配置操作，进行客服聊天功能
+                // let baseUrl = 'http://wh.nevercompromise.cn/qjs-boot/api/v1';   // 测试环境地址
+                let baseUrl = 'https://back.qijiashuo.com/qjs-boot/api/v1';  // 线上地址
+
+                let originType = 1;   // 1:商品详情  2:课程详情 3:店铺详情
+                let myId = '';   // 当前的用户ID
+                let shopSkuId = '';  // 当前的商品ID
+                let courseSkuId = '';   // 当前的课程ID
+
+                // let shopInfo = null;  // 商品信息对象{title，price，desc，img_url，item_url}
+                // let courseInfo = null;  // 课程信息对象{title，price，desc，img_url，item_url}
+                let id = '';    // 商品或课程ID
+                let title = '';  // 商品或课程标题
+                let price = '';   // 商品或课程价格
+                let desc = '';    // 商品或课程描述信息
+                let img_url = '';   // 商品或课程图片地址
+                let item_url = '';   // 商品或课程的链接地址
+
+                let visitor = null;  // 访客的信息对象{trueName，qq，phone，companyName，userNickname，description，email}
+                let username = '737977534125178880';  // 当前用户的环信用户名
+                let password = '123456';  // 当前用户的环信密码
+
+                // 初始化操作
+                async function init(){
+                    initQuery();
+                    // const res = await getServerParams();
+                    // console.log(res);
+                    getServerParams().then(data => {
+                        if(data.code == 1){
+                            let result = data.data;
+                            username = result.hxId;
+                            password = result.hxPassword;
+                            // username = '202007291';
+                            // password = '123456';
+                            id = result.hxGoodsVO.id;
+                            title = result.hxGoodsVO.goodsName;
+                            price = result.hxGoodsVO.price;
+                            desc = result.hxGoodsVO.introduction;
+                            img_url = result.hxGoodsVO.picture;
+                            item_url = '';
+                            // result.hxUserVO.mobile
+                            // result.hxUserVO.username
+                            visitor = {  
+                                userNickname: result.hxUserVO.username,       
+                                trueName: result.hxUserVO.username,
+                                phone: result.hxUserVO.mobile,
+                                qq: '',
+                                email: '',
+                                companyName: '',
+                                description: ''
+                            }
+                            console.log(result);
+                            setTimeout(() => {
+                                // console.log("》》》》》》》》》》》》》》》》》1");
+                                initConfig();
+                            }, 500);
+                        }
+                    }).catch(err=>{
+                        console.log("发生了错误", err);
+                    });
+                }
+                
+                // 初始化参数信息
+                function initQuery(){
+                    let queryObj = getQuery();
+                    if(!queryObj){
+                        throw new Error("抱歉，query参数: originType必传");
+                    }
+                    originType = queryObj.originType;
+                    myId = queryObj.myId;
+                    shopSkuId = queryObj.shopSkuId;
+                    courseSkuId = queryObj.courseSkuId;
+                    console.log("获取到的参数");
+                    console.log(queryObj);
+                }
+
+                // 从服务端获取参数
+                function getServerParams(){
+                    return new Promise((rs, rj) => {
+                        let xhr = new XMLHttpRequest();
+                        // 拼接对象为query参数{a: 1, b:2} => '?a=1&b=2'
+                        let queryParam = '';
+                        if(originType == 1){
+                            queryParam = joinQueryParam({userId: myId, skuId: shopSkuId})
+                        }else if(originType == 2){
+                            queryParam = joinQueryParam({userId: myId, skuId: courseSkuId})
+                        }else if(originType == 3){
+                            queryParam = joinQueryParam({userId: myId});
+                        }
+                        xhr.open('get', baseUrl + '/hx/queryHXVisitorInfo' + queryParam);
+                        xhr.onreadystatechange = () => {
+                            if(xhr.readyState === 4 && xhr.status === 200){
+                                rs(JSON.parse(xhr.responseText));
+                            }
+                        }
+                        xhr.send();
+                    });
+                }
+
+                // 初始化环信客服云的配置
+                function initConfig(){
+                    // console.log("》》》》》》》》》》》》》》》》》2");
+                    window.easemobim = window.easemobim || {};
+                    easemobim.config = handleOptions();
+                    // window.onload = function(){
+                        // console.log("》》》》》》》》》》》》》》》》》3");
+
+                        setTimeout(() => {
+                            var aObj = document.getElementById("myEntry");
+                            aObj.click();
+                        }, 300);
+                    // }
+                }
+
+                // 处理环信客服云初始化配置项
+                function handleOptions(){
+                    let obj = {};
+                    handleBaseOptions(obj);
+                    handleVisitorOptions(obj);
+                    if(originType != 3){
+                        handleShopOrCourseOptions(obj);
+                    }
+                    console.log(obj);
+                    return obj;
+                }
+
+                // 基础配置项
+                function handleBaseOptions(obj){
+                    obj.configId = '81187707-d640-4960-8582-3c5017e7be46';
+                    obj.hide = true;
+                    obj.autoConnect = true;
+                    obj.hideKeyboard = true;
+                    obj.user = {
+                        username, 
+                        password
+                    }
+                }
+
+                // 配置访客信息
+                function handleVisitorOptions(obj){
+                    if(visitor){
+                        obj.visitor = visitor;
+                        // {         
+                        //     trueName: '黎小冷',
+                        //     qq: '1526210107',
+                        //     phone: '18638006781',
+                        //     companyName: '环信',
+                        //     userNickname: '我是黎小冷',
+                        //     description: '描述信息',
+                        //     email: '1526210107@qq.com'
+                        // }
+                    }
+                }
+                
+                // 配置商品信息
+                function handleShopOrCourseOptions(obj){
+                    obj.onready = function () {                  
+                        easemobim.sendExt({
+                            ext:{
+                                "imageName": "mallImage3.png",
+                                //custom代表自定义消息，无需修改
+                                "type": "custom",           
+                                "msgtype": {
+                                    "track": {
+                                        title, price, desc, img_url, item_url
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // 获取URL中的参数
+                function getQuery(){
+                    var obj = {};
+                    var query = window.location.search.slice(1);
+                    if(!query) return null;
+                    var queryArr = query.split("&");
+                    for (var i = 0; i < queryArr.length; i++) {
+                        var temp = queryArr[i].split('=');
+                        obj[temp[0]] = decodeURI(temp[1]);
+                    }
+                    return Object.keys(obj).length > 0 ? obj : null;
+                }
+
+                // 拼接URL参数
+                function joinQueryParam(obj){
+                    let str = '';
+                    for(var key in obj){
+                        if(obj.hasOwnProperty(key)){
+                            str += `&${key}=${obj[key]}`;
+                        }
+                    }
+                    return '?' + str.slice(1);
+                }
+
+                return {
+                    init
+                }
+            })();
+            kefu.init();
+        </script>
+        <script src="//kefu.easemob.com/webim/easemob.js"></script>
+    </body>
+</html>

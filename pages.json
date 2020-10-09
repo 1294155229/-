@@ -1,0 +1,369 @@
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/tabbar/index/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/tabbar/send/send",
+			"style":{
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/tabbar/mine/mine",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/views/login/login",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/views/login/register",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/views/login/forgetPwd",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/views/login/codeLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/views/login/bindPhone",
+			"style": {
+				"navigationBarTitleText": "绑定手机"
+			}
+		}
+		,{
+			"path": "pages/views/login/xieyi",
+			"style": {
+				"navigationBarTitleText": "协议"
+			}
+		}
+	    ,{
+            "path" : "pages/views/search/search",
+            "style" : {
+				"navigationStyle": "custom"
+			}
+        }
+		,{
+		    "path" : "pages/views/search/labour/labour",
+		    "style" : {
+				"navigationStyle": "custom"
+			}
+		}
+        ,{
+            "path" : "pages/views/mine/userinfo/userinfo",
+            "style" : {
+				"navigationBarTitleText":"个人信息",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"text":"保存  ",
+								"fontSize":"30rpx",
+								"color":"#999999"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/setting/setting",
+            "style" : {
+				"navigationBarTitleText":"设置"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/setting/changePwd/changePwd",
+            "style" : {
+				"navigationBarTitleText":"修改密码"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/setting/changePhone/changePhone",
+            "style" : {
+				"navigationBarTitleText":"修改手机号"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/setting/feedback/feedback",
+            "style" : {
+				"navigationBarTitleText":"意见反馈"
+			}
+        }
+		,{
+		    "path" : "pages/views/mine/setting/feedback/submit-success/submit-success",
+		    "style" : {
+				"navigationBarTitleText":"意见反馈"
+			}
+		}
+        ,{
+            "path" : "pages/views/mine/setting/aboutus/aboutus",
+            "style" : {
+				"navigationBarTitleText":"关于我们"
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findPerson/findPerson",
+            "style" : {
+				"navigationBarTitleText":"找工人",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findTeam/findTeam",
+            "style" : {
+				"navigationBarTitleText":"找施工队",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findMaterial/findMaterial",
+            "style" : {
+				"navigationBarTitleText":"找材料",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findDevice/findDevice",
+            "style" : {
+				"navigationBarTitleText":"找设备",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findPurchase/findPurchase",
+            "style" : {
+				"navigationBarTitleText":"求购",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findRecruit/findRecruit",
+            "style" : {
+				"navigationBarTitleText":"工人招聘",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/index/more/more",
+            "style" : {
+				"navigationBarTitleText":"更多"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/mysend/mysend",
+            "style" : {
+				"navigationBarTitleText":"我的发布"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendPerson/sendPerson",
+            "style" : {
+				"navigationBarTitleText":"找人工编辑"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendTeam/sendTeam",
+            "style" : {
+				"navigationBarTitleText":"发布施工队"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendMaterial/sendMaterial",
+            "style" : {
+				"navigationBarTitleText":"材料新增"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendDevice/sendDevice",
+            "style" : {
+				"navigationBarTitleText":"发布设备"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendPurchase/sendPurchase",
+            "style" : {
+				"navigationBarTitleText":"发布新增"
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendRecruit/sendRecruit",
+            "style" : {
+				"navigationBarTitleText":"发布职位"
+			}
+        }
+
+        ,{
+            "path" : "pages/tabbar/sysmsg/sysmsg",
+            "style" : {
+				"navigationBarTitleText":"系统消息"
+			}
+        }
+        ,{
+            "path" : "pages/tabbar/sysmsg/sysmsg-detail/sysmsg-detail",
+            "style" : {
+				"navigationBarTitleText":"消息详情"
+			}
+        }
+        ,{
+            "path" : "pages/views/index/allDetail/allDetail",
+            "style" : {
+				"navigationBarTitleText":"详情"
+			}
+        }
+        ,{
+            "path" : "pages/views/index/findMarket/findMarket",
+            "style" : {
+				"navigationBarTitleText":"专业市场",
+				"app-plus":{
+					"titleNView":{
+						"buttons":[
+							{
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue794",
+								"fontSize": "38rpx"
+							}
+						]
+					}
+				}
+			}
+        }
+        ,{
+            "path" : "pages/views/send/sendSuc/sendSuc",
+            "style" : {
+				"navigationBarTitleText":"发布成功"
+			}
+        }
+        ,{
+            "path" : "pages/city_list/city_list",
+            "style" : {
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/setting/updateVersion/updateVersion",
+            "style" : {
+				"navigationBarTitleText":"版本更新"
+			}
+        }
+        ,{
+            "path" : "pages/views/mine/my-comment/my-comment",
+            "style" : {
+				"navigationBarTitleText":"我的评论"
+			}
+        }
+    ],
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#02B5FC",
+		"borderStyle": "black",
+		"backgroundColor": "#F6F6F6",
+		"list": [{
+				"iconPath": "static/image/tabbar/1.png",
+				"selectedIconPath": "static/image/tabbar/1_active.png",
+				"pagePath": "pages/tabbar/index/index",
+				"text": "首页"
+			},
+			{
+				"iconPath": "static/image/tabbar/2.png",
+				"selectedIconPath": "static/image/tabbar/2_active.png",
+				"pagePath": "pages/tabbar/send/send",
+				"text": "发布"
+			},
+			{
+				"iconPath": "static/image/tabbar/3.png",
+				"selectedIconPath": "static/image/tabbar/3_active.png",
+				"pagePath": "pages/tabbar/mine/mine",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#F8F8F8",
+		"animationType": "slide-in-right"
+	},
+	"condition": {
+		// "current": 1,
+		// "list": [{
+		// 	"name": "",
+		// 	"path": "pages/views/login/bindPhone",
+		// 	"query": ""
+		// }]
+	}
+}

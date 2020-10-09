@@ -1,0 +1,142 @@
+.container {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	padding-top: 50rpx;
+	.head-city {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		background: #ffffff;
+		border-bottom: 1px solid #ddd;
+		z-index: 100;
+		.city-search {
+			width: 100%;
+			display: flex;
+			align-items: center;
+		}
+		.city {
+			// margin: 30rpx 0 0 15rpx;
+			width: 5%;
+		}
+		.search-wrappe {
+			height: 60%;
+			width: 93%;
+			display: flex;
+			align-items: center;
+			.search-wrapper {
+				height: 100%;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				width: 87%;
+				background: #f5f5f5;
+				border-radius: 32rpx;
+				image {
+					margin: 2rpx 15rpx 0 28rpx;
+					width: 26rpx;
+					height: 26rpx;
+				}
+				input {
+					flex: 1;
+					font-size: 28rpx;
+					color: #666;
+					height: 100%;
+				}
+			}
+			.search-btn {
+				margin-left: 15rpx;
+			}
+		}
+	}
+	.nearest,
+	.hot {
+		padding-bottom: 12upx;
+		padding-left: 11px;
+		box-sizing: border-box;
+		width: 702upx;
+		border-bottom: 1px solid #eee;
+		background-color: #f5f5f5;
+
+		.title {
+			line-height: 86upx;
+			font-size: 24upx;
+			color: #666;
+		}
+		.list {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			.item {
+				margin-bottom: 20upx;
+				margin-right: 18upx;
+				min-width: 208upx;
+				padding: 0 12upx;
+				height: 72upx;
+				line-height: 72upx;
+				text-align: center;
+				background: #f6f6f7;
+				border-radius: 6upx;
+				font-size: 28upx;
+				color: #333;
+				background-color: #fff;
+				.iconfont {
+					color: #068be0;
+					font-size: 28upx;
+					margin-right: 12upx;
+				}
+			}
+		}
+	}
+	.city-list {
+		margin: 0 auto;
+		// width: 702upx;
+		width: 100%;
+		.city-group {
+			.group-title {
+				line-height: 54upx;
+				font-size: 24upx;
+				color: #666;
+				padding-left: 24upx;
+				width: 702upx;
+			}
+			.list-group {
+				padding-left: 24upx;
+				padding-bottom: 64rpx;
+				width: 702upx;
+				.list-group-item {
+					line-height: 76upx;
+					color: #111;
+					font-size: 30upx;
+					border-bottom: 1px solid #eee;
+				}
+			}
+		}
+	}
+	.list-shortcut {
+		position: fixed;
+		z-index: 30;
+		right: 0;
+		top: 51%;
+		transform: translateY(-50%);
+		width: 25px;
+		padding: 20upx 0;
+		border-radius: 10px;
+		text-align: center;
+		// background: #fff;
+		font-family: Helvetica;
+		.item {
+			padding: 3px;
+			line-height: 1;
+			color: #333;
+			font-size: 28upx;
+			&.current {
+				color: #000;
+			}
+		}
+	}
+}
+
+.mask {
+}
